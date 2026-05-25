@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movement OS | KIN-H001 (Kinetic HIIT)</title>
+    <title>Movement OS | KIN-013 Phase 3 (Week 7 HIIT)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap');
@@ -33,198 +33,243 @@
         .timer-work { color: #ffffff; }
         .timer-rest { color: #888888; }
         .timer-alert { color: #ff4444; }
+
+        /* RA Toggle Display Logic */
+        .ra-mode-element { display: none; }
+        body.ra-active .ra-mode-element { display: block; }
+        body.ra-active .standard-mode-element { display: none; }
     </style>
 </head>
 <body class="h-screen flex flex-col md:flex-row overflow-hidden">
 
     <aside class="w-full md:w-80 border-b md:border-b-0 md:border-r border-[#333333] bg-[#050505] p-8 flex flex-col overflow-y-auto">
         <div class="mb-8">
-            <p class="text-xs tracking-widest text-gray-500 font-bold uppercase mb-2">Protocol</p>
-            <h1 class="text-2xl text-white">KIN-H001</h1>
-            <p class="text-sm text-gray-400 mt-2">Gym Floor: Kinetic Power</p>
+            <p class="text-xs tracking-widest text-gray-500 font-bold uppercase mb-2">Protocol: Phase 3</p>
+            <h1 class="text-2xl text-white">KIN-013_W7</h1>
+            <p class="text-sm text-gray-400 mt-2">Kinetic HIIT (Force Integration)</p>
         </div>
 
-        <div class="mb-12 border border-[#333333] bg-[#111111] p-6">
+        <div class="mb-8">
+            <button id="raToggleBtn" onclick="toggleRAMode()" class="w-full border border-[#333333] bg-[#0a0a0a] hover:border-[#3b82f6] transition-all p-4 text-left">
+                <span class="text-xs tracking-widest text-gray-500 font-bold uppercase block mb-1">System Override</span>
+                <span id="raToggleText" class="font-semibold text-white tracking-wide">ACTIVATE RA LANE</span>
+                <p class="text-xs text-gray-500 mt-2">Joint-Safe / Restricted Articulation</p>
+            </button>
+        </div>
+
+        <div class="mb-8 border border-[#333333] bg-[#111111] p-6">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xs uppercase tracking-widest text-gray-500">Interval Clock</h3>
                 <span id="roundDisplay" class="text-xs font-bold tracking-widest text-white border border-[#333333] px-2 py-1">ROUND 1/3</span>
             </div>
-            
             <div class="text-center mb-6">
                 <p id="stateDisplay" class="text-xs uppercase tracking-widest text-gray-500 mb-1">PREPARE</p>
                 <div id="timerDisplay" class="clock-display text-5xl font-bold timer-work">00:45</div>
             </div>
-
             <div class="flex space-x-4">
                 <button id="startBtn" onclick="toggleHiitTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-sm font-semibold tracking-wide">START</button>
                 <button onclick="resetHiitTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-sm font-semibold tracking-wide text-gray-500">RESET</button>
             </div>
         </div>
 
-        <nav class="flex-1 space-y-4" id="nav-menu">
-            <button onclick="switchPhase('primer')" class="nav-btn w-full text-left p-4 border border-[#333333] bg-[#111111] hover:border-gray-500 transition-colors active-nav">
-                <span class="text-xs text-gray-500 block mb-1">Mobility Prep</span>
-                <span class="font-semibold tracking-wide">1. Primer</span>
+        <nav class="flex-1 space-y-3" id="nav-menu">
+            <button onclick="switchPhase('warmup')" class="nav-btn w-full text-left p-4 border border-[#333333] bg-[#111111] hover:border-gray-500 transition-colors active-nav">
+                <span class="font-semibold tracking-wide text-sm">1. Warm-Up (Mobility)</span>
             </button>
             <button onclick="switchPhase('blockA')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
-                <span class="text-xs text-gray-500 block mb-1">Sagittal Power</span>
-                <span class="font-semibold tracking-wide">2. Block A</span>
+                <span class="font-semibold tracking-wide text-sm">2. Block A (Sagittal)</span>
             </button>
             <button onclick="switchPhase('blockB')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
-                <span class="text-xs text-gray-500 block mb-1">Transverse Core</span>
-                <span class="font-semibold tracking-wide">3. Block B</span>
+                <span class="font-semibold tracking-wide text-sm">3. Block B (Transverse)</span>
             </button>
             <button onclick="switchPhase('burnout')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
-                <span class="text-xs text-gray-500 block mb-1">Continuous Load</span>
-                <span class="font-semibold tracking-wide">4. Finisher</span>
+                <span class="font-semibold tracking-wide text-sm">4. Burnout (Finisher)</span>
+            </button>
+            <button onclick="switchPhase('warmdown')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
+                <span class="font-semibold tracking-wide text-sm">5. Warm Down (Reset)</span>
             </button>
         </nav>
     </aside>
 
     <main class="flex-1 bg-[#050505] p-8 md:p-16 overflow-y-auto" id="content-area">
         
-        <div id="primer" class="phase-content active">
-            <div class="flex justify-between items-end mb-12">
-                <div>
-                    <h2 class="text-4xl mb-2">The Primer (Mobility)</h2>
-                    <p class="text-gray-400 uppercase tracking-widest text-sm">KB Halo to Deep Squat</p>
-                </div>
-                <div class="border border-[#333333] px-4 py-2 bg-[#111111]">
-                    <span class="text-xs text-gray-500 uppercase tracking-widest block mb-1">Tools Required</span>
-                    <span class="font-semibold text-white">Light Kettlebell</span>
-                </div>
-            </div>
+        <div id="warmup" class="phase-content active">
+            <h2 class="text-4xl mb-2">Warm-Up (Mobility)</h2>
+            <p class="text-gray-400 uppercase tracking-widest text-sm mb-12">Dynamic Joint Lubrication</p>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-xl mb-4 text-gray-300">Execution (45s Flow)</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <span class="text-gray-300 leading-relaxed">• Orbit KB tightly around the head (Halo).</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-gray-300 leading-relaxed">• Drop immediately into a deep goblet squat.</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-gray-300 leading-relaxed">• Drive up and reverse the halo direction.</span>
-                        </li>
-                    </ul>
+                    <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">1. The Setup</h3>
+                    <p class="text-gray-200 mb-8 standard-mode-element">Standing. Light Kettlebell (Goblet grip).</p>
+                    <p class="text-blue-400 mb-8 ra-mode-element">Standing. Bodyweight only (No KB). Wide stance.</p>
+                    
+                    <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">2. The Execution (45s Flow)</h3>
+                    <div class="standard-mode-element text-gray-300 space-y-2">
+                        <p>• Orbit KB tightly around the head (Halo).</p>
+                        <p>• Drop immediately into a deep goblet squat.</p>
+                        <p>• Drive up and reverse the halo direction.</p>
+                    </div>
+                    <div class="ra-mode-element text-blue-300 space-y-2">
+                        <p>• Large arm circles overhead (No weight).</p>
+                        <p>• Drop into a partial range quarter-squat (90 degrees max).</p>
+                        <p>• Return to standing, maintaining vertical spine.</p>
+                    </div>
                 </div>
-                <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
-                    <p class="text-gray-200">Maintain vertical thorax during the squat. Anchor the scapula during the halo to isolate shoulder mobility, not spinal extension.</p>
-                </div>
-            </div>
 
-            <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
-                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
-                <p class="text-red-200 text-lg">Rib flare during the halo, or lumbar spine rounding (butt wink) at the bottom of the deep squat.</p>
+                <div class="bg-[#111111] border border-[#333333] p-8 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">3. The Shepherd Cue</h3>
+                        <p class="text-gray-200 italic font-light standard-mode-element">"Orbit the weight, then drop your hips straight down like a glass elevator."</p>
+                        <p class="text-blue-300 italic font-light ra-mode-element">"Draw massive circles with your fingertips. Only sit as deep as a high bar stool."</p>
+                    </div>
+                    <div class="mt-8 border-t border-[#333333] pt-8">
+                        <h3 class="text-xs uppercase tracking-widest text-red-500 font-bold mb-2">4. The Safety Gate (QA Fail)</h3>
+                        <p class="text-red-200 standard-mode-element">Rib flare during the halo, or lumbar spine rounding (butt wink) at the bottom of the deep squat.</p>
+                        <p class="text-red-400 ra-mode-element">Pushing into joint pain during the squat. If knees ache, regress depth immediately.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div id="blockA" class="phase-content">
-            <div class="flex justify-between items-end mb-12">
-                <div>
-                    <h2 class="text-4xl mb-2">Block A (Sagittal Power)</h2>
-                    <p class="text-gray-400 uppercase tracking-widest text-sm">45s Work / 15s Rest | 3 Rounds</p>
-                </div>
-                <div class="border border-[#333333] px-4 py-2 bg-[#111111]">
-                    <span class="text-xs text-gray-500 uppercase tracking-widest block mb-1">Tools Required</span>
-                    <span class="font-semibold text-white">Heavy DB / Ankle Weights</span>
-                </div>
-            </div>
+            <h2 class="text-4xl mb-2">Block A (Sagittal Power)</h2>
+            <p class="text-gray-400 uppercase tracking-widest text-sm mb-12">45s Work / 15s Rest | 3 Rounds</p>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-xl mb-4 text-gray-300">M1: Goblet Squat</h3>
-                    <p class="text-gray-400 mb-4 text-sm">3-second slow eccentric descent. 1-second explosive concentric drive.</p>
-                    <h3 class="text-xl mb-4 text-gray-300 mt-8">M2: Reverse Lunge + Knee Drive</h3>
-                    <p class="text-gray-400 text-sm">Ankle weights on. Step back into deep lunge, explode forward driving the knee to chest height. (Alternate legs per round).</p>
+                    <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">1. The Setup</h3>
+                    <p class="text-gray-200 mb-8 standard-mode-element">Heavy DB (Goblet) / Ankle Weights on.</p>
+                    <p class="text-blue-400 mb-8 ra-mode-element">TRX Suspension Straps or secure barre for hand support.</p>
+                    
+                    <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">2. The Execution</h3>
+                    <div class="standard-mode-element text-gray-300 space-y-4">
+                        <p><strong>M1: Goblet Squat.</strong> 3-sec slow descent. Explosive concentric drive up.</p>
+                        <p><strong>M2: Reverse Lunge + Knee Drive.</strong> Step back into deep lunge, explode forward driving the knee to chest height.</p>
+                    </div>
+                    <div class="ra-mode-element text-blue-300 space-y-4">
+                        <p><strong>M1: TRX Assisted Squat.</strong> Use arms to offload knee weight. Slow, controlled partial range.</p>
+                        <p><strong>M2: Static Split Squat.</strong> Hold TRX. Maintain static lunge stance, drop back knee straight down (No explosive knee drive).</p>
+                    </div>
                 </div>
-                <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
-                    <p class="text-gray-200">Force production originates from lumbopelvic stability. The core must brace completely before the explosive phase.</p>
+
+                <div class="bg-[#111111] border border-[#333333] p-8 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">3. The Shepherd Cue</h3>
+                        <p class="text-gray-200 italic font-light standard-mode-element">"Load the spring slowly, then drive the floor away from you violently."</p>
+                        <p class="text-blue-300 italic font-light ra-mode-element">"Use the straps to make yourself 20% lighter. Move like you are moving through water."</p>
+                    </div>
+                    <div class="mt-8 border-t border-[#333333] pt-8">
+                        <h3 class="text-xs uppercase tracking-widest text-red-500 font-bold mb-2">4. The Safety Gate (QA Fail)</h3>
+                        <p class="text-red-200 standard-mode-element">Knee valgus (caving inward) on the lunge drive, indicating glute medius failure.</p>
+                        <p class="text-red-400 ra-mode-element">Locking out the knees sharply at the top of the squat. Keep a micro-bend to protect the joint.</p>
+                    </div>
                 </div>
-            </div>
-
-            <div class="border border-[#333333] bg-[#0a0a0a] p-8 mb-8">
-                <h3 class="text-gray-400 font-bold uppercase tracking-widest text-sm mb-2">Progression / Regression</h3>
-                <p class="text-gray-300">Regress lunge to a static split squat if balance fails under fatigue.</p>
-            </div>
-
-            <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
-                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
-                <p class="text-red-200 text-lg">Knee valgus (caving inward) on the lunge drive, indicating glute medius failure.</p>
             </div>
         </div>
 
         <div id="blockB" class="phase-content">
-            <div class="flex justify-between items-end mb-12">
-                <div>
-                    <h2 class="text-4xl mb-2">Block B (Transverse Core)</h2>
-                    <p class="text-gray-400 uppercase tracking-widest text-sm">45s Work / 15s Rest | 3 Rounds</p>
-                </div>
-                <div class="border border-[#333333] px-4 py-2 bg-[#111111]">
-                    <span class="text-xs text-gray-500 uppercase tracking-widest block mb-1">Tools Required</span>
-                    <span class="font-semibold text-white">Medium DBs / Light DB</span>
-                </div>
-            </div>
+            <h2 class="text-4xl mb-2">Block B (Transverse Core)</h2>
+            <p class="text-gray-400 uppercase tracking-widest text-sm mb-12">45s Work / 15s Rest | 3 Rounds</p>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-xl mb-4 text-gray-300">M1: Renegade Row</h3>
-                    <p class="text-gray-400 mb-4 text-sm">High plank position holding DBs. Row one arm back while fighting rotational pull. Alternate arms.</p>
-                    <h3 class="text-xl mb-4 text-gray-300 mt-8">M2: Weighted Hollow Hold</h3>
-                    <p class="text-gray-400 text-sm">Supine. Legs at 45 degrees. Hold a single light DB extended over the chest. Static isometric hold.</p>
+                    <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">1. The Setup</h3>
+                    <p class="text-gray-200 mb-8 standard-mode-element">High plank position. Medium DBs under hands. / Supine for M2.</p>
+                    <p class="text-blue-400 mb-8 ra-mode-element">Quadruped (All fours) on padded mat. No weights (protect wrists).</p>
+                    
+                    <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">2. The Execution</h3>
+                    <div class="standard-mode-element text-gray-300 space-y-4">
+                        <p><strong>M1: Renegade Row.</strong> High plank. Row one arm back while fighting rotational pull.</p>
+                        <p><strong>M2: Weighted Hollow Hold.</strong> Supine. Legs at 45 degrees. Hold DB extended over chest.</p>
+                    </div>
+                    <div class="ra-mode-element text-blue-300 space-y-4">
+                        <p><strong>M1: Quadruped Bird-Dog.</strong> Extend opposite arm and leg slowly. Focus on spinal stabilization, not load.</p>
+                        <p><strong>M2: Dead Bug.</strong> Supine. Head resting on mat. Extend opposite arm/leg without weights.</p>
+                    </div>
                 </div>
-                <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
-                    <p class="text-gray-200">Strict anti-rotation. The pelvis must remain parallel to the floor during the row. Wide foot stance for stability.</p>
-                </div>
-            </div>
 
-            <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
-                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
-                <p class="text-red-200 text-lg">Hips swinging violently side-to-side during the row (Regress to knees), or lumbar spine arching off the mat in Hollow Hold.</p>
+                <div class="bg-[#111111] border border-[#333333] p-8 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">3. The Shepherd Cue</h3>
+                        <p class="text-gray-200 italic font-light standard-mode-element">"Balance a hot cup of coffee on your pelvis during the row. Do not spill it."</p>
+                        <p class="text-blue-300 italic font-light ra-mode-element">"Press your lower back into the mat like you are squishing a grape during the Dead Bug."</p>
+                    </div>
+                    <div class="mt-8 border-t border-[#333333] pt-8">
+                        <h3 class="text-xs uppercase tracking-widest text-red-500 font-bold mb-2">4. The Safety Gate (QA Fail)</h3>
+                        <p class="text-red-200 standard-mode-element">Hips swinging violently side-to-side during the row, or lumbar spine arching in Hollow Hold.</p>
+                        <p class="text-red-400 ra-mode-element">Wrist pain in quadruped (Regress to forearms immediately if RA flare-up occurs).</p>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div id="burnout" class="phase-content">
-            <div class="flex justify-between items-end mb-12">
-                <div>
-                    <h2 class="text-4xl mb-2">The Finisher (Continuous)</h2>
-                    <p class="text-gray-400 uppercase tracking-widest text-sm">2 Minutes Unbroken</p>
-                </div>
-                <div class="border border-[#333333] px-4 py-2 bg-[#111111]">
-                    <span class="text-xs text-gray-500 uppercase tracking-widest block mb-1">Tools Required</span>
-                    <span class="font-semibold text-white">Heaviest KB / DB available</span>
-                </div>
-            </div>
+            <h2 class="text-4xl mb-2">Burnout (Finisher)</h2>
+            <p class="text-gray-400 uppercase tracking-widest text-sm mb-12">2 Minutes Continuous</p>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-xl mb-4 text-gray-300">Execution</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <span class="text-gray-300 leading-relaxed">• Unilateral Farmer's Carry (Suitcase Carry).</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-gray-300 leading-relaxed">• Hold heavy weight in ONE hand. Walk for 60 seconds.</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-gray-300 leading-relaxed">• Switch hands immediately. Walk for 60 seconds.</span>
-                        </li>
-                    </ul>
+                    <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">1. The Setup</h3>
+                    <p class="text-gray-200 mb-8 standard-mode-element">Standing. Heaviest KB/DB in one hand.</p>
+                    <p class="text-blue-400 mb-8 ra-mode-element">Standing. Light DBs held in front rack (at shoulders) to avoid grip fatigue.</p>
+                    
+                    <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">2. The Execution</h3>
+                    <div class="standard-mode-element text-gray-300 space-y-4">
+                        <p><strong>Unilateral Farmer's Carry.</strong> Walk for 60 seconds with weight in right hand. Switch hands immediately for final 60 seconds.</p>
+                    </div>
+                    <div class="ra-mode-element text-blue-300 space-y-4">
+                        <p><strong>Bilateral Front Rack Carry.</strong> Walk for 2 minutes with light weights resting on shoulders (eliminates traction stress on elbow/finger joints).</p>
+                    </div>
                 </div>
-                <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
-                    <p class="text-gray-200">Axial elongation under unilateral load. Engage the contralateral obliques to prevent the spine from bending toward the weight.</p>
+
+                <div class="bg-[#111111] border border-[#333333] p-8 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">3. The Shepherd Cue</h3>
+                        <p class="text-gray-200 italic font-light standard-mode-element">"Walk like you are carrying heavy luggage through a narrow hallway without hitting the walls."</p>
+                        <p class="text-blue-300 italic font-light ra-mode-element">"Walk tall, keeping your collarbones wide and your breath steady."</p>
+                    </div>
+                    <div class="mt-8 border-t border-[#333333] pt-8">
+                        <h3 class="text-xs uppercase tracking-widest text-red-500 font-bold mb-2">4. The Safety Gate (QA Fail)</h3>
+                        <p class="text-red-200 standard-mode-element">Leaning heavily to the side to compensate for the unilateral weight. Shrugging shoulder into ear.</p>
+                        <p class="text-red-400 ra-mode-element">Arching the lower back to support the front rack weights.</p>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
-                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
-                <p class="text-red-200 text-lg">Lateral flexion (leaning side-to-side) or shrugging the weighted shoulder into the ear.</p>
+        <div id="warmdown" class="phase-content">
+            <h2 class="text-4xl mb-2">Warm Down (Cool Down)</h2>
+            <p class="text-gray-400 uppercase tracking-widest text-sm mb-12">Parasympathetic Reset</p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">1. The Setup</h3>
+                    <p class="text-gray-200 mb-8 standard-mode-element">Mat. Bodyweight.</p>
+                    <p class="text-blue-400 mb-8 ra-mode-element">Mat. Bodyweight. Props (Pillows/Blocks) available.</p>
+                    
+                    <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">2. The Execution</h3>
+                    <div class="standard-mode-element text-gray-300 space-y-4">
+                        <p><strong>Child's Pose into Thread the Needle.</strong> Sit hips back to heels. Slide one arm under the chest to stretch posterior shoulder.</p>
+                        <p><strong>Static Hamstring Stretch.</strong> Supine. Single leg extended.</p>
+                    </div>
+                    <div class="ra-mode-element text-blue-300 space-y-4">
+                        <p><strong>Supported Child's Pose.</strong> Place block under forehead. Avoid deep knee flexion if inflamed.</p>
+                        <p><strong>Gentle Knee Sway.</strong> Supine. Knees bent, feet flat. Slowly sway knees side to side (Windshield Wipers).</p>
+                    </div>
+                </div>
+
+                <div class="bg-[#111111] border border-[#333333] p-8 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-2">3. The Shepherd Cue</h3>
+                        <p class="text-gray-200 italic font-light standard-mode-element">"Melt your chest into the floor. Inhale for 4 seconds, exhale for 6 seconds to slow the heart rate."</p>
+                        <p class="text-blue-300 italic font-light ra-mode-element">"Let the mat completely support your weight. Do not push into any stretch."</p>
+                    </div>
+                    <div class="mt-8 border-t border-[#333333] pt-8">
+                        <h3 class="text-xs uppercase tracking-widest text-red-500 font-bold mb-2">4. The Safety Gate (QA Fail)</h3>
+                        <p class="text-red-200 standard-mode-element">Forcing the rotational stretch instead of breathing into it.</p>
+                        <p class="text-red-400 ra-mode-element">Holding breath due to joint discomfort.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -240,17 +285,37 @@
             event.currentTarget.classList.add('bg-[#111111]');
         }
 
+        // RA Toggle Logic
+        function toggleRAMode() {
+            const body = document.body;
+            const btnText = document.getElementById('raToggleText');
+            const btn = document.getElementById('raToggleBtn');
+            
+            body.classList.toggle('ra-active');
+            
+            if (body.classList.contains('ra-active')) {
+                btnText.innerText = "RA MODE ACTIVE";
+                btnText.classList.replace('text-white', 'text-blue-400');
+                btn.classList.add('border-[#3b82f6]');
+                btn.classList.replace('bg-[#0a0a0a]', 'bg-[#0a1122]');
+            } else {
+                btnText.innerText = "ACTIVATE RA LANE";
+                btnText.classList.replace('text-blue-400', 'text-white');
+                btn.classList.remove('border-[#3b82f6]');
+                btn.classList.replace('bg-[#0a1122]', 'bg-[#0a0a0a]');
+            }
+        }
+
         // HIIT Interval Timer Logic
         let hiitInterval;
         let isHiitRunning = false;
-        
         const WORK_TIME = 45;
         const REST_TIME = 15;
         const TOTAL_ROUNDS = 3;
         
         let currentTime = WORK_TIME;
         let currentRound = 1;
-        let isWorkPhase = true; // true = work, false = rest
+        let isWorkPhase = true; 
 
         const timerDisplay = document.getElementById('timerDisplay');
         const stateDisplay = document.getElementById('stateDisplay');
@@ -288,17 +353,13 @@
                     currentTime--;
                     
                     if (currentTime < 0) {
-                        // Switch phases
                         if (isWorkPhase) {
-                            // Moving to Rest
                             isWorkPhase = false;
                             currentTime = REST_TIME;
                             stateDisplay.innerText = "REST / TRANSITION";
                         } else {
-                            // Moving to next Work round
                             currentRound++;
                             if (currentRound > TOTAL_ROUNDS) {
-                                // Workout Complete
                                 clearInterval(hiitInterval);
                                 isHiitRunning = false;
                                 stateDisplay.innerText = "BLOCK COMPLETE";
