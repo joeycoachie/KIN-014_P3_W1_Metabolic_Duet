@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movement OS | KIN-013 Phase 3 (Week 7)</title>
+    <title>Movement OS | KIN-013 Phase 2 (Week 7)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap');
@@ -24,228 +24,271 @@
         .phase-content { display: none; }
         .phase-content.active { display: block; animation: fadeIn 0.3s ease-in; }
         
-        .ra-card { display: none; }
-        body.ra-active .ra-card { display: block; animation: slideDown 0.3s ease-out; }
-        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
 
-        .clock-display { font-family: 'Courier New', Courier, monospace; }
+        .clock-display { font-family: 'Courier New', Courier, monospace; letter-spacing: 0.05em; }
         .timer-work { color: #ffffff; }
-        .timer-rest { color: #888888; }
+        .timer-rest { color: #666666; }
         .timer-alert { color: #ff4444; }
+        
+        /* RA Medical Override Styling */
+        .ra-block { display: none; margin-top: 1.5rem; }
+        body.ra-active .ra-block { display: block; animation: fadeIn 0.3s ease-in; }
+        
+        /* Switch Toggle styling */
+        .toggle-checkbox:checked { right: 0; border-color: #3b82f6; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #3b82f6; }
     </style>
 </head>
 <body class="h-screen flex flex-col md:flex-row overflow-hidden">
 
-    <aside class="w-full md:w-80 border-b md:border-b-0 md:border-r border-[#333333] bg-[#050505] p-8 flex flex-col overflow-y-auto">
+    <aside class="w-full md:w-80 border-b md:border-b-0 md:border-r border-[#333333] bg-[#050505] p-6 flex flex-col overflow-y-auto">
         <div class="mb-6">
             <p class="text-xs tracking-widest text-gray-500 font-bold uppercase mb-2">Protocol</p>
-            <h1 class="text-2xl text-white">KIN-013_P3_W7</h1>
-            <p class="text-sm text-gray-400 mt-2">Gym Floor: Kinetic Power</p>
+            <h1 class="text-2xl text-white">KIN-013_P2_W7</h1>
+            <p class="text-sm text-gray-400 mt-1">Gym Floor: Kinetic Power</p>
         </div>
 
-        <div class="mb-8">
-            <button id="raToggleBtn" onclick="toggleRA()" class="w-full border border-[#3b82f6] bg-[#0a1120] hover:bg-[#101b33] transition-colors p-3 flex justify-between items-center">
-                <span class="text-xs font-bold tracking-widest text-[#3b82f6] uppercase">RA Override</span>
-                <span id="raStatus" class="text-xs text-gray-500">OFF</span>
-            </button>
+        <div class="mb-8 border border-[#1e3a8a] bg-[#0f172a] p-4 flex items-center justify-between">
+            <div>
+                <span class="block text-xs uppercase tracking-widest text-blue-400 font-bold">Global Override</span>
+                <span class="block text-sm text-white">RA (Joint Protect)</span>
+            </div>
+            <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                <input type="checkbox" name="toggle" id="raToggle" class="toggle-checkbox absolute block w-6 h-6 rounded-none bg-[#050505] border-2 border-[#1e3a8a] appearance-none cursor-pointer z-10" onclick="toggleRA()"/>
+                <label for="raToggle" class="toggle-label block overflow-hidden h-6 rounded-none bg-[#050505] border border-[#1e3a8a] cursor-pointer"></label>
+            </div>
         </div>
 
-        <div class="mb-8 border border-[#333333] bg-[#111111] p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xs uppercase tracking-widest text-gray-500">Interval</h3>
+        <div class="mb-8 border border-[#333333] bg-[#111111] p-5">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-xs uppercase tracking-widest text-gray-500">Interval Clock</h3>
                 <span id="roundDisplay" class="text-xs font-bold tracking-widest text-white border border-[#333333] px-2 py-1">ROUND 1/3</span>
             </div>
-            <div class="text-center mb-6">
+            
+            <div class="text-center mb-5">
                 <p id="stateDisplay" class="text-xs uppercase tracking-widest text-gray-500 mb-1">PREPARE</p>
-                <div id="timerDisplay" class="clock-display text-5xl font-bold timer-work">00:45</div>
+                <div id="timerDisplay" class="clock-display text-4xl font-bold timer-work">00:45</div>
             </div>
-            <div class="flex space-x-4">
-                <button id="startBtn" onclick="toggleHiitTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-sm font-semibold tracking-wide">START</button>
-                <button onclick="resetHiitTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-sm font-semibold tracking-wide text-gray-500">RESET</button>
+
+            <div class="flex space-x-2">
+                <button id="startBtn" onclick="toggleHiitTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-xs font-semibold tracking-wide">START</button>
+                <button onclick="resetHiitTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-xs font-semibold tracking-wide text-gray-500">RESET</button>
             </div>
         </div>
 
         <nav class="flex-1 space-y-3" id="nav-menu">
-            <button onclick="switchPhase('warmup')" class="nav-btn w-full text-left p-4 border border-[#333333] bg-[#111111] hover:border-gray-500 transition-colors active-nav">
-                <span class="font-semibold tracking-wide text-sm">1. Warm Up (Primer)</span>
+            <button onclick="switchPhase('primer')" class="nav-btn w-full text-left p-4 border border-[#333333] bg-[#111111] hover:border-gray-500 transition-colors active-nav">
+                <span class="text-xs text-gray-500 block mb-1">0:00 - 10:00</span>
+                <span class="font-semibold tracking-wide">1. Warm-Up</span>
             </button>
             <button onclick="switchPhase('blockA')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
-                <span class="font-semibold tracking-wide text-sm">2. Block A (Sagittal)</span>
+                <span class="text-xs text-gray-500 block mb-1">45s / 15s | 3 Rounds</span>
+                <span class="font-semibold tracking-wide">2. Block A</span>
             </button>
             <button onclick="switchPhase('blockB')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
-                <span class="font-semibold tracking-wide text-sm">3. Block B (Transverse)</span>
+                <span class="text-xs text-gray-500 block mb-1">45s / 15s | 3 Rounds</span>
+                <span class="font-semibold tracking-wide">3. Block B</span>
             </button>
-            <button onclick="switchPhase('warmdown')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
-                <span class="font-semibold tracking-wide text-sm">4. Warm Down (Integrate)</span>
+            <button onclick="switchPhase('burnout')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
+                <span class="text-xs text-gray-500 block mb-1">40:00 - 50:00</span>
+                <span class="font-semibold tracking-wide">4. Warm-Down</span>
             </button>
         </nav>
     </aside>
 
     <main class="flex-1 bg-[#050505] p-8 md:p-12 overflow-y-auto" id="content-area">
         
-        <div id="warmup" class="phase-content active">
-            <h2 class="text-4xl mb-8">Warm Up (The Primer)</h2>
-            
-            <div class="bg-[#111111] border border-[#333333] p-8 mb-4">
-                <h3 class="text-lg uppercase tracking-widest text-gray-400 mb-6 border-b border-[#333333] pb-2">Standard Protocol</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <p class="text-sm text-gray-500 uppercase tracking-widest mb-1">Setup</p>
-                        <p class="text-gray-200 mb-4">Standing. Light Kettlebell held at chest.</p>
-                        <p class="text-sm text-gray-500 uppercase tracking-widest mb-1">Execution</p>
-                        <p class="text-gray-200">Orbit KB tightly around the head (Halo), drop immediately into a deep goblet squat. Drive up and reverse.</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 uppercase tracking-widest mb-1">Shepherd Cue</p>
-                        <p class="text-gray-200 italic font-light mb-4">"Draw a tight halo of light around your crown, then drop like an elevator."</p>
-                        <p class="text-sm text-red-500 font-bold uppercase tracking-widest mb-1">Safety Gate</p>
-                        <p class="text-red-200">Rib flare during the halo; lumbar rounding (butt wink) in the deep squat.</p>
-                    </div>
+        <div id="primer" class="phase-content active">
+            <div class="flex justify-between items-start mb-10">
+                <div>
+                    <h2 class="text-4xl mb-2">Warm-Up (Mobility)</h2>
+                    <p class="text-gray-400 uppercase tracking-widest text-sm">KB Halo into Goblet Squat</p>
+                </div>
+                <div class="border border-[#333333] px-6 py-4 bg-[#111111] text-right">
+                    <span class="text-xs text-gray-500 uppercase tracking-widest block mb-1">1. The Setup</span>
+                    <span class="font-semibold text-white block">Light Kettlebell</span>
+                    <span class="text-sm text-gray-400">Standing tall, core braced.</span>
                 </div>
             </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8 relative">
+                    <h3 class="text-sm text-gray-500 uppercase tracking-widest mb-4">2. The Execution</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-4 h-4 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Orbit KB tightly around head (Halo).</span>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-4 h-4 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Drop immediately into a deep goblet squat.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-4 h-4 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Drive up and reverse halo direction.</span>
+                        </li>
+                    </ul>
 
-            <div class="ra-card bg-[#0a1120] border border-[#3b82f6] p-8">
-                <h3 class="text-lg uppercase tracking-widest text-[#3b82f6] mb-6 border-b border-[#101b33] pb-2">Medical Override: Rheumatoid Arthritis</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <p class="text-sm text-[#3b82f6] opacity-70 uppercase tracking-widest mb-1">Setup</p>
-                        <p class="text-gray-200 mb-4">Seated on box. Bodyweight only. Zero wrist loading.</p>
-                        <p class="text-sm text-[#3b82f6] opacity-70 uppercase tracking-widest mb-1">Execution</p>
-                        <p class="text-gray-200">Seated Thoracic Rotations (arms crossed). Transition to slow, supported Sit-to-Stands (no deep flexion).</p>
+                    <div class="ra-block border-l-4 border-[#3b82f6] bg-[#0f172a] p-6 mt-6">
+                        <h4 class="text-[#3b82f6] font-bold text-xs uppercase tracking-widest mb-2">RA Modification (Joint Protect)</h4>
+                        <p class="text-gray-300 text-sm">Drop the weight entirely. Perform a pain-free range bodyweight box squat to limit knee flexion. Replace the halo with unweighted shoulder rolls.</p>
                     </div>
-                    <div>
-                        <p class="text-sm text-[#3b82f6] opacity-70 uppercase tracking-widest mb-1">Shepherd Cue</p>
-                        <p class="text-gray-200 italic font-light mb-4">"Wring out your chest gently. Stand up smoothly using your glutes, not momentum."</p>
-                        <p class="text-sm text-red-500 font-bold uppercase tracking-widest mb-1">Safety Gate</p>
-                        <p class="text-red-200">Knees collapsing inward on the stand; using hands/wrists to push off the box.</p>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="bg-[#111111] border border-[#333333] p-8">
+                        <h3 class="text-sm text-gray-500 uppercase tracking-widest mb-4">3. The Shepherd Cue</h3>
+                        <p class="text-gray-200 italic font-light text-lg">"Orbit the weight like a halo, then drop your hips straight down like an elevator shaft."</p>
+                    </div>
+                    <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
+                        <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">4. Safety Gate (QA Fail)</h3>
+                        <p class="text-red-200">Rib flare during the halo, or lumbar spine rounding (butt wink) at the bottom of the squat.</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="blockA" class="phase-content">
-            <h2 class="text-4xl mb-8">Block A (Sagittal Power)</h2>
-            
-            <div class="bg-[#111111] border border-[#333333] p-8 mb-4">
-                <h3 class="text-lg uppercase tracking-widest text-gray-400 mb-6 border-b border-[#333333] pb-2">Standard Protocol</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <p class="text-sm text-gray-500 uppercase tracking-widest mb-1">Setup</p>
-                        <p class="text-gray-200 mb-4">Movement 1 (M1): Heavy DB Goblet. Movement 2 (M2): Ankle Weights.</p>
-                        <p class="text-sm text-gray-500 uppercase tracking-widest mb-1">Execution</p>
-                        <p class="text-gray-200">M1: 3-sec slow eccentric descent, explosive drive up.<br>M2: Reverse lunge, explode forward driving the knee to chest height.</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 uppercase tracking-widest mb-1">Shepherd Cue</p>
-                        <p class="text-gray-200 italic font-light mb-4">"Load the spring slowly, then explode off the floor."</p>
-                        <p class="text-sm text-red-500 font-bold uppercase tracking-widest mb-1">Safety Gate</p>
-                        <p class="text-red-200">Knee valgus (caving inward) on the lunge drive; losing neutral spine at squat depth.</p>
-                    </div>
+            <div class="flex justify-between items-start mb-10">
+                <div>
+                    <h2 class="text-4xl mb-2">Block A (Sagittal Power)</h2>
+                    <p class="text-gray-400 uppercase tracking-widest text-sm">Alternating Load</p>
+                </div>
+                <div class="border border-[#333333] px-6 py-4 bg-[#111111] text-right">
+                    <span class="text-xs text-gray-500 uppercase tracking-widest block mb-1">1. The Setup</span>
+                    <span class="font-semibold text-white block">1 Heavy Dumbbell</span>
+                    <span class="text-sm text-gray-400">Neutral spine, wide stance.</span>
                 </div>
             </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-sm text-gray-500 uppercase tracking-widest mb-4">2. The Execution</h3>
+                    <h4 class="text-white font-semibold mb-2">Movement 1: Goblet Squat</h4>
+                    <p class="text-gray-400 mb-6 text-sm flex items-start">
+                        <input type="checkbox" class="mt-1 mr-3 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-4 h-4 cursor-pointer">
+                        3-second slow eccentric descent. 1-second explosive concentric drive.
+                    </p>
+                    <h4 class="text-white font-semibold mb-2">Movement 2: Alternating Reverse Lunge</h4>
+                    <p class="text-gray-400 text-sm flex items-start">
+                        <input type="checkbox" class="mt-1 mr-3 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-4 h-4 cursor-pointer">
+                        Step back into deep lunge, explode forward. Alternate legs continuously.
+                    </p>
 
-            <div class="ra-card bg-[#0a1120] border border-[#3b82f6] p-8">
-                <h3 class="text-lg uppercase tracking-widest text-[#3b82f6] mb-6 border-b border-[#101b33] pb-2">Medical Override: Rheumatoid Arthritis</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <p class="text-sm text-[#3b82f6] opacity-70 uppercase tracking-widest mb-1">Setup</p>
-                        <p class="text-gray-200 mb-4">M1: Bodyweight Box Squat. M2: Static Supported Split Squat.</p>
-                        <p class="text-sm text-[#3b82f6] opacity-70 uppercase tracking-widest mb-1">Execution</p>
-                        <p class="text-gray-200">Eliminate all explosive shear force. M1: Controlled tap to box. M2: Hold TRX or wall for balance, drop straight down slowly.</p>
+                    <div class="ra-block border-l-4 border-[#3b82f6] bg-[#0f172a] p-6 mt-6">
+                        <h4 class="text-[#3b82f6] font-bold text-xs uppercase tracking-widest mb-2">RA Modification (Joint Protect)</h4>
+                        <p class="text-gray-300 text-sm">M1: Goblet Squat onto a physical bench (restricts deep flexion). M2: Replace deep lunges with Alternating Reverse Step-Taps (do not drop the back knee).</p>
                     </div>
-                    <div>
-                        <p class="text-sm text-[#3b82f6] opacity-70 uppercase tracking-widest mb-1">Shepherd Cue</p>
-                        <p class="text-gray-200 italic font-light mb-4">"Move like you are underwater. Constant, smooth tension."</p>
-                        <p class="text-sm text-red-500 font-bold uppercase tracking-widest mb-1">Safety Gate</p>
-                        <p class="text-red-200">Any impact or bouncing at the bottom of the movement.</p>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="bg-[#111111] border border-[#333333] p-8">
+                        <h3 class="text-sm text-gray-500 uppercase tracking-widest mb-4">3. The Shepherd Cue</h3>
+                        <p class="text-gray-200 italic font-light text-lg">"Explode through the floor to stand, but fight gravity all the way down."</p>
+                    </div>
+                    <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
+                        <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">4. Safety Gate (QA Fail)</h3>
+                        <p class="text-red-200">Knee valgus (caving inward) on the lunge drive, indicating glute medius failure.</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="blockB" class="phase-content">
-            <h2 class="text-4xl mb-8">Block B (Transverse Core)</h2>
-            
-            <div class="bg-[#111111] border border-[#333333] p-8 mb-4">
-                <h3 class="text-lg uppercase tracking-widest text-gray-400 mb-6 border-b border-[#333333] pb-2">Standard Protocol</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <p class="text-sm text-gray-500 uppercase tracking-widest mb-1">Setup</p>
-                        <p class="text-gray-200 mb-4">M1: High Plank with DBs. M2: Supine on Mat with 1 Light DB.</p>
-                        <p class="text-sm text-gray-500 uppercase tracking-widest mb-1">Execution</p>
-                        <p class="text-gray-200">M1 (Renegade Row): Row one arm back fighting rotational pull.<br>M2 (Hollow Hold): Static isometric hold, DB extended over chest.</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 uppercase tracking-widest mb-1">Shepherd Cue</p>
-                        <p class="text-gray-200 italic font-light mb-4">"Balance a glass of water on your lower back. Do not let it spill."</p>
-                        <p class="text-sm text-red-500 font-bold uppercase tracking-widest mb-1">Safety Gate</p>
-                        <p class="text-red-200">Hips swinging side-to-side during the row; lumbar spine arching off mat in Hollow Hold.</p>
-                    </div>
+            <div class="flex justify-between items-start mb-10">
+                <div>
+                    <h2 class="text-4xl mb-2">Block B (Transverse Core)</h2>
+                    <p class="text-gray-400 uppercase tracking-widest text-sm">Anti-Rotation & Isometrics</p>
+                </div>
+                <div class="border border-[#333333] px-6 py-4 bg-[#111111] text-right">
+                    <span class="text-xs text-gray-500 uppercase tracking-widest block mb-1">1. The Setup</span>
+                    <span class="font-semibold text-white block">Medium DBs / Mat</span>
+                    <span class="text-sm text-gray-400">High plank position, wide feet.</span>
                 </div>
             </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-sm text-gray-500 uppercase tracking-widest mb-4">2. The Execution</h3>
+                    <h4 class="text-white font-semibold mb-2">Movement 1: Alternating Renegade Row</h4>
+                    <p class="text-gray-400 mb-6 text-sm flex items-start">
+                        <input type="checkbox" class="mt-1 mr-3 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-4 h-4 cursor-pointer">
+                        High plank. Row right arm, row left arm. Fight rotational pull.
+                    </p>
+                    <h4 class="text-white font-semibold mb-2">Movement 2: Weighted Hollow Hold</h4>
+                    <p class="text-gray-400 text-sm flex items-start">
+                        <input type="checkbox" class="mt-1 mr-3 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-4 h-4 cursor-pointer">
+                        Supine. Legs at 45 deg. Hold single DB over chest. Static hold.
+                    </p>
 
-            <div class="ra-card bg-[#0a1120] border border-[#3b82f6] p-8">
-                <h3 class="text-lg uppercase tracking-widest text-[#3b82f6] mb-6 border-b border-[#101b33] pb-2">Medical Override: Rheumatoid Arthritis</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <p class="text-sm text-[#3b82f6] opacity-70 uppercase tracking-widest mb-1">Setup</p>
-                        <p class="text-gray-200 mb-4">M1: Standing with Resistance Band. M2: Dead Bug on Mat (No weights).</p>
-                        <p class="text-sm text-[#3b82f6] opacity-70 uppercase tracking-widest mb-1">Execution</p>
-                        <p class="text-gray-200">Remove weight-bearing from inflamed wrists. M1: Standing Band Row (loop band around wrists if grip is painful). M2: Slow, unweighted alternating leg extensions.</p>
+                    <div class="ra-block border-l-4 border-[#3b82f6] bg-[#0f172a] p-6 mt-6">
+                        <h4 class="text-[#3b82f6] font-bold text-xs uppercase tracking-widest mb-2">RA Modification (Joint Protect)</h4>
+                        <p class="text-gray-300 text-sm">CRITICAL: High plank risks severe wrist compression. M1: Move to Kneeling Banded Rows. M2: Replace Hollow Hold with Supine Dead Bugs (head resting on mat).</p>
                     </div>
-                    <div>
-                        <p class="text-sm text-[#3b82f6] opacity-70 uppercase tracking-widest mb-1">Shepherd Cue</p>
-                        <p class="text-gray-200 italic font-light mb-4">"Pull from your back, let your hands just be hooks."</p>
-                        <p class="text-sm text-red-500 font-bold uppercase tracking-widest mb-1">Safety Gate</p>
-                        <p class="text-red-200">Death-gripping the band causing hand pain; straining the neck off the mat.</p>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="bg-[#111111] border border-[#333333] p-8">
+                        <h3 class="text-sm text-gray-500 uppercase tracking-widest mb-4">3. The Shepherd Cue</h3>
+                        <p class="text-gray-200 italic font-light text-lg">"Lock your hips in concrete. Row the weight without spilling the glass of water on your back."</p>
+                    </div>
+                    <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
+                        <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">4. Safety Gate (QA Fail)</h3>
+                        <p class="text-red-200">Hips swinging violently side-to-side during the row, or lumbar spine arching off the mat.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="warmdown" class="phase-content">
-            <h2 class="text-4xl mb-8">Warm Down (Integration)</h2>
-            
-            <div class="bg-[#111111] border border-[#333333] p-8 mb-4">
-                <h3 class="text-lg uppercase tracking-widest text-gray-400 mb-6 border-b border-[#333333] pb-2">Standard Protocol</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <p class="text-sm text-gray-500 uppercase tracking-widest mb-1">Setup</p>
-                        <p class="text-gray-200 mb-4">Mat. Bodyweight.</p>
-                        <p class="text-sm text-gray-500 uppercase tracking-widest mb-1">Execution</p>
-                        <p class="text-gray-200">Active floor stretching. Downward Dog into Pigeon Pose. Hold end ranges to flush lactic acid.</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 uppercase tracking-widest mb-1">Shepherd Cue</p>
-                        <p class="text-gray-200 italic font-light mb-4">"Sink into the floor. Let gravity do the work you just fought against."</p>
-                        <p class="text-sm text-red-500 font-bold uppercase tracking-widest mb-1">Safety Gate</p>
-                        <p class="text-red-200">Holding breath to force a deeper stretch; misaligned hips in Pigeon.</p>
-                    </div>
+        <div id="burnout" class="phase-content">
+            <div class="flex justify-between items-start mb-10">
+                <div>
+                    <h2 class="text-4xl mb-2">Warm-Down (Unwind)</h2>
+                    <p class="text-gray-400 uppercase tracking-widest text-sm">Regulated Flush</p>
+                </div>
+                <div class="border border-[#333333] px-6 py-4 bg-[#111111] text-right">
+                    <span class="text-xs text-gray-500 uppercase tracking-widest block mb-1">1. The Setup</span>
+                    <span class="font-semibold text-white block">Mat Only</span>
+                    <span class="text-sm text-gray-400">Seated, legs extended wide.</span>
                 </div>
             </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-sm text-gray-500 uppercase tracking-widest mb-4">2. The Execution</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-4 h-4 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Spine Stretch Forward.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-4 h-4 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Rotate into The Saw (R/L).</span>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-4 h-4 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Transition smoothly into Z-Sit Mermaid stretch.</span>
+                        </li>
+                    </ul>
 
-            <div class="ra-card bg-[#0a1120] border border-[#3b82f6] p-8">
-                <h3 class="text-lg uppercase tracking-widest text-[#3b82f6] mb-6 border-b border-[#101b33] pb-2">Medical Override: Rheumatoid Arthritis</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <p class="text-sm text-[#3b82f6] opacity-70 uppercase tracking-widest mb-1">Setup</p>
-                        <p class="text-gray-200 mb-4">Supine on Mat. Pillows/Blocks available.</p>
-                        <p class="text-sm text-[#3b82f6] opacity-70 uppercase tracking-widest mb-1">Execution</p>
-                        <p class="text-gray-200">Supported parasympathetic breathing. Gentle 90/90 hip shifts (windshield wipers). Avoid all end-range joint stretching to prevent flare-ups.</p>
+                    <div class="ra-block border-l-4 border-[#3b82f6] bg-[#0f172a] p-6 mt-6">
+                        <h4 class="text-[#3b82f6] font-bold text-xs uppercase tracking-widest mb-2">RA Modification (Joint Protect)</h4>
+                        <p class="text-gray-300 text-sm">If hips are flared/inflamed, Z-sit on the floor is contraindicated. Move client to a physical chair for seated lateral reaches.</p>
                     </div>
-                    <div>
-                        <p class="text-sm text-[#3b82f6] opacity-70 uppercase tracking-widest mb-1">Shepherd Cue</p>
-                        <p class="text-gray-200 italic font-light mb-4">"Move your legs side to side like seaweed in the ocean."</p>
-                        <p class="text-sm text-red-500 font-bold uppercase tracking-widest mb-1">Safety Gate</p>
-                        <p class="text-red-200">Pushing a joint to the point of a 'stretch' sensation. Keep everything mid-range.</p>
+                </div>
+                
+                <div class="space-y-8">
+                    <div class="bg-[#111111] border border-[#333333] p-8">
+                        <h3 class="text-sm text-gray-500 uppercase tracking-widest mb-4">3. The Shepherd Cue</h3>
+                        <p class="text-gray-200 italic font-light text-lg">"Paint a massive circle around your body, letting your heart rate drop with every exhale."</p>
+                    </div>
+                    <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
+                        <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">4. Safety Gate (QA Fail)</h3>
+                        <p class="text-red-200">Lifting the opposing sit-bones off the mat during the lateral stretch.</p>
                     </div>
                 </div>
             </div>
@@ -254,6 +297,11 @@
     </main>
 
     <script>
+        // RA Toggle Logic
+        function toggleRA() {
+            document.body.classList.toggle('ra-active');
+        }
+
         // Phase Switching
         function switchPhase(phaseId) {
             document.querySelectorAll('.phase-content').forEach(el => el.classList.remove('active'));
@@ -261,27 +309,6 @@
             
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-[#111111]'));
             event.currentTarget.classList.add('bg-[#111111]');
-        }
-
-        // RA Toggle Logic
-        let isRAActive = false;
-        function toggleRA() {
-            isRAActive = !isRAActive;
-            const body = document.body;
-            const btn = document.getElementById('raToggleBtn');
-            const status = document.getElementById('raStatus');
-            
-            if (isRAActive) {
-                body.classList.add('ra-active');
-                btn.classList.replace('bg-[#0a1120]', 'bg-[#101b33]');
-                status.innerText = 'ACTIVE';
-                status.classList.replace('text-gray-500', 'text-[#3b82f6]');
-            } else {
-                body.classList.remove('ra-active');
-                btn.classList.replace('bg-[#101b33]', 'bg-[#0a1120]');
-                status.innerText = 'OFF';
-                status.classList.replace('text-[#3b82f6]', 'text-gray-500');
-            }
         }
 
         // HIIT Interval Timer Logic
@@ -294,7 +321,7 @@
         
         let currentTime = WORK_TIME;
         let currentRound = 1;
-        let isWorkPhase = true;
+        let isWorkPhase = true; 
 
         const timerDisplay = document.getElementById('timerDisplay');
         const stateDisplay = document.getElementById('stateDisplay');
@@ -307,11 +334,11 @@
             timerDisplay.innerText = `${mins}:${secs}`;
             
             if (currentTime <= 3 && currentTime > 0) {
-                timerDisplay.className = 'clock-display text-5xl font-bold timer-alert';
+                timerDisplay.className = 'clock-display text-4xl font-bold timer-alert';
             } else if (isWorkPhase) {
-                timerDisplay.className = 'clock-display text-5xl font-bold timer-work';
+                timerDisplay.className = 'clock-display text-4xl font-bold timer-work';
             } else {
-                timerDisplay.className = 'clock-display text-5xl font-bold timer-rest';
+                timerDisplay.className = 'clock-display text-4xl font-bold timer-rest';
             }
         }
 
@@ -343,7 +370,7 @@
                                 isHiitRunning = false;
                                 stateDisplay.innerText = "BLOCK COMPLETE";
                                 timerDisplay.innerText = "00:00";
-                                timerDisplay.className = 'clock-display text-5xl font-bold text-green-500';
+                                timerDisplay.className = 'clock-display text-4xl font-bold text-green-500';
                                 startBtn.innerText = 'DONE';
                                 startBtn.disabled = true;
                                 return;
