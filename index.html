@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movement OS | KIN-014 Gym Floor Metabolic Duet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #050505; 
+            color: #ffffff; 
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #333333; border-radius: 0; }
+        ::-webkit-scrollbar-thumb:hover { background: #555555; }
+        
+        .phase-content { display: none; }
+        .phase-content.active { display: block; animation: fadeIn 0.3s ease-in; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .clock-display { font-family: 'Courier New', Courier, monospace; letter-spacing: 0.1em; }
+        .lane-header { font-family: 'Courier New', Courier, monospace; letter-spacing: 0.05em; }
+    </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row overflow-hidden">
+
+    <aside class="w-full md:w-80 border-b md:border-b-0 md:border-r border-[#333333] bg-[#050505] p-8 flex flex-col overflow-y-auto">
+        <div class="mb-8">
+            <p class="text-xs tracking-widest text-gray-500 font-bold uppercase mb-2">Protocol</p>
+            <h1 class="text-2xl text-white">KIN-014_P3_W1</h1>
+            <p class="text-sm text-gray-400 mt-2">Metabolic Pilates (Gym Floor)</p>
+        </div>
+
+        <div class="mb-12 border border-[#333333] bg-[#111111] p-6">
+            <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-4">Session Clock</h3>
+            <div id="timerDisplay" class="clock-display text-4xl text-white mb-6 text-center">00:00</div>
+            <div class="flex space-x-4">
+                <button id="startBtn" onclick="toggleTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-sm font-semibold tracking-wide">START</button>
+                <button onclick="resetTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-sm font-semibold tracking-wide text-gray-500">RESET</button>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-4" id="nav-menu">
+            <button onclick="switchPhase('primer')" class="nav-btn w-full text-left p-4 border border-[#333333] bg-[#111111] hover:border-gray-500 transition-colors active-nav">
+                <span class="text-xs text-gray-500 block mb-1">0:00 - 10:00</span>
+                <span class="font-semibold tracking-wide">1. Primer (Flow)</span>
+            </button>
+            <button onclick="switchPhase('anchor')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
+                <span class="text-xs text-gray-500 block mb-1">10:00 - 25:00</span>
+                <span class="font-semibold tracking-wide">2. Anchor (Leg Burn)</span>
+            </button>
+            <button onclick="switchPhase('crucible')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
+                <span class="text-xs text-gray-500 block mb-1">25:00 - 40:00</span>
+                <span class="font-semibold tracking-wide">3. Crucible (Core Matrix)</span>
+            </button>
+            <button onclick="switchPhase('unwind')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
+                <span class="text-xs text-gray-500 block mb-1">40:00 - 50:00</span>
+                <span class="font-semibold tracking-wide">4. Integration (Unwind)</span>
+            </button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 bg-[#050505] p-8 md:p-16 overflow-y-auto" id="content-area">
+        
+        <div id="primer" class="phase-content active">
+            <h2 class="text-4xl mb-2">The Primer (Mobility Flow)</h2>
+            <p class="text-gray-400 mb-12 uppercase tracking-widest text-sm">Gym Floor Warm-Up</p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">LANE A: ZI XUEN (Dynamic)</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-5 h-5 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">World's Greatest Stretch</span>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-5 h-5 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Deep Lunge with Thoracic Rotation</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">LANE B: MAE (RA Safe)</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-5 h-5 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Standing Spinal Roll Downs</span>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-5 h-5 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Walk out to Wall Push-Ups (Fists/Neutral Wrists)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
+                    <p class="text-gray-200">Elevate heart rate via full-body multi-joint movement. Lubricate joints before load.</p>
+                </div>
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Shepherd Cue</h3>
+                    <p class="text-gray-200 italic font-light">"Move like a continuous engine warming up. Don't stop moving."</p>
+                </div>
+            </div>
+
+            <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
+                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
+                <p class="text-red-200 text-lg">Mae putting full body weight on flat, extended wrists on the floor.</p>
+            </div>
+        </div>
+
+        <div id="anchor" class="phase-content">
+            <h2 class="text-4xl mb-2">The Anchor (Leg Burn)</h2>
+            <p class="text-gray-400 mb-12 uppercase tracking-widest text-sm">45s Work / 15s Transition</p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">LANE A: ZI XUEN (Plyometric)</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Jump Squats (45 seconds)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Isometric Squat Holds (15 seconds)</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">LANE B: MAE (Low Impact)</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Static Sumo Squats (Heavy DB at chest)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Focus on depth and glute activation</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
+                    <p class="text-gray-200">Glute dominance. Monitor Zi Xuen's hip stability during the landing phase.</p>
+                </div>
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Shepherd Cue</h3>
+                    <p class="text-gray-200 italic font-light">"The floor is lava. Drop your weight deep into your heels."</p>
+                </div>
+            </div>
+
+            <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
+                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">CRITICAL Safety Gate (QA Fail)</h3>
+                <p class="text-red-200 text-lg">Valgus knee collapse (knees caving inward) during fatigue.</p>
+            </div>
+        </div>
+
+        <div id="crucible" class="phase-content">
+            <h2 class="text-4xl mb-2">The Crucible (Core Matrix)</h2>
+            <p class="text-gray-400 mb-12 uppercase tracking-widest text-sm">Continuous Mat Flow</p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">LANE A: ZI XUEN (Dynamic Core)</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Full Plank Jacks</span>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Mountain Climbers (High pace)</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">LANE B: MAE (Static Core)</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Forearm Plank Holds (Protects Wrists)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Forearm Side Planks (Knees down if needed)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
+                    <p class="text-gray-200">Anti-extension in the sagittal plane. Zero lumbar sagging while the limbs move.</p>
+                </div>
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Shepherd Cue</h3>
+                    <p class="text-gray-200 italic font-light">"Balance a glass of water on your lower back. Don't spill it."</p>
+                </div>
+            </div>
+
+            <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
+                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
+                <p class="text-red-200 text-lg">Mae reporting any cervical spine (neck) or wrist pressure. Drop to knees immediately.</p>
+            </div>
+        </div>
+
+        <div id="unwind" class="phase-content">
+            <h2 class="text-4xl mb-2">The Integration (Unwind)</h2>
+            <p class="text-gray-400 mb-12 uppercase tracking-widest text-sm">Static Cooldown</p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">LANE A: ZI XUEN</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Deep Pigeon Pose (Floor)</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">LANE B: MAE</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
+                            <span class="text-gray-300 leading-relaxed">Seated Figure 4 Stretch (Protects knees from deep flexion)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
+                    <p class="text-gray-200">Parasympathetic down-regulation. Focus on exhales to slow the heart rate.</p>
+                </div>
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Shepherd Cue</h3>
+                    <p class="text-gray-200 italic font-light">"Melt heavily into the floor. Exhale the tension away."</p>
+                </div>
+            </div>
+
+            <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
+                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
+                <p class="text-red-200 text-lg">Forcing external hip rotation past the point of knee discomfort.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Phase Switching Logic
+        function switchPhase(phaseId) {
+            document.querySelectorAll('.phase-content').forEach(el => { el.classList.remove('active'); });
+            document.getElementById(phaseId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('bg-[#111111]'); });
+            event.currentTarget.classList.add('bg-[#111111]');
+        }
+
+        // Timer Logic
+        let timerInterval;
+        let seconds = 0;
+        let isRunning = false;
+
+        function updateDisplay() {
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('startBtn');
+            if (isRunning) {
+                clearInterval(timerInterval);
+                btn.innerText = 'RESUME';
+                btn.classList.replace('text-red-500', 'text-white');
+            } else {
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    updateDisplay();
+                }, 1000);
+                btn.innerText = 'PAUSE';
+                btn.classList.add('text-red-500');
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            seconds = 0;
+            isRunning = false;
+            updateDisplay();
+            const btn = document.getElementById('startBtn');
+            btn.innerText = 'START';
+            btn.classList.remove('text-red-500');
+            btn.classList.add('text-white');
+        }
+    </script>
+</body>
+</html>
