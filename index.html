@@ -352,4 +352,103 @@
                 btn.innerText = '[X] RA OVERRIDE ACTIVE';
             } else {
                 document.body.classList.remove('ra-active');
-                btn.classList.remove('active
+                btn.classList.remove('active');
+                btn.innerText = '[ ] RA OVERRIDE';
+            }
+        }
+
+        // HIIT Interval Timer Logic
+        let hiitInterval;
+        let isHiitRunning = false;
+        
+        const WORK_TIME = 45;
+        const REST_TIME = 15;
+        const TOTAL_ROUNDS = 3;
+        
+        let currentTime = WORK_TIME;
+        let currentRound = 1;
+        let isWorkPhase = true;
+
+        const timerDisplay = document.getElementById('timerDisplay');
+        const stateDisplay = document.getElementById('stateDisplay');
+        const roundDisplay = document.getElementById('roundDisplay');
+        const startBtn = document.getElementById('startBtn');
+
+        function updateHiitDisplay() {
+            const mins = Math.floor(currentTime / 60).toString().padStart(2, '0');
+            const secs = (currentTime % 60).toString().padStart(2, '0');
+            timerDisplay.innerText = `${mins}:${secs}`;
+            
+            if (currentTime <= 3 && currentTime > 0) {
+                timerDisplay.className = 'clock-display text-5xl font-bold timer-alert';
+            } else if (isWorkPhase) {
+                timerDisplay.className = 'clock-display text-5xl font-bold timer-work';
+            } else {
+                timerDisplay.className = 'clock-display text-5xl font-bold timer-rest';
+            }
+        }
+
+        function toggleHiitTimer() {
+            if (isHiitRunning) {
+                clearInterval(hiitInterval);
+                startBtn.innerText = 'RESUME';
+                startBtn.classList.replace('text-red-500', 'text-white');
+            } else {
+                startBtn.innerText = 'PAUSE';
+                startBtn.classList.add('text-red-500');
+                
+                if (currentTime === WORK_TIME && currentRound === 1 && isWorkPhase) {
+                    stateDisplay.innerText = "WORK";
+                }
+
+                hiitInterval = setInterval(() => {
+                    currentTime--;
+                    
+                    if (currentTime < 0) {
+                        if (isWorkPhase) {
+                            isWorkPhase = false;
+                            currentTime = REST_TIME;
+                            stateDisplay.innerText = "REST / TRANSITION";
+                        } else {
+                            currentRound++;
+                            if (currentRound > TOTAL_ROUNDS) {
+                                clearInterval(hiitInterval);
+                                isHiitRunning = false;
+                                stateDisplay.innerText = "BLOCK COMPLETE";
+                                timerDisplay.innerText = "00:00";
+                                timerDisplay.className = 'clock-display text-5xl font-bold text-green-500';
+                                startBtn.innerText = 'DONE';
+                                startBtn.disabled = true;
+                                return;
+                            }
+                            isWorkPhase = true;
+                            currentTime = WORK_TIME;
+                            stateDisplay.innerText = "WORK";
+                            roundDisplay.innerText = `ROUND ${currentRound}/${TOTAL_ROUNDS}`;
+                        }
+                    }
+                    updateHiitDisplay();
+                }, 1000);
+            }
+            isHiitRunning = !isHiitRunning;
+        }
+
+        function resetHiitTimer() {
+            clearInterval(hiitInterval);
+            isHiitRunning = false;
+            isWorkPhase = true;
+            currentRound = 1;
+            currentTime = WORK_TIME;
+            
+            stateDisplay.innerText = "PREPARE";
+            roundDisplay.innerText = `ROUND 1/${TOTAL_ROUNDS}`;
+            startBtn.innerText = 'START';
+            startBtn.classList.remove('text-red-500');
+            startBtn.classList.add('text-white');
+            startBtn.disabled = false;
+            
+            updateHiitDisplay();
+        }
+    </script>
+</body>
+</html>
