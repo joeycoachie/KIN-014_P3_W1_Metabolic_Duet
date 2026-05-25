@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movement OS | SYS-BATTLECARD-HIIT-001</title>
+    <title>Movement OS | KIN-H001 (Kinetic HIIT)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap');
@@ -29,8 +29,10 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .clock-display { font-family: 'Courier New', Courier, monospace; letter-spacing: 0.1em; }
-        .lane-header { font-family: 'Courier New', Courier, monospace; letter-spacing: 0.05em; }
+        .clock-display { font-family: 'Courier New', Courier, monospace; }
+        .timer-work { color: #ffffff; }
+        .timer-rest { color: #888888; }
+        .timer-alert { color: #ff4444; }
     </style>
 </head>
 <body class="h-screen flex flex-col md:flex-row overflow-hidden">
@@ -38,35 +40,43 @@
     <aside class="w-full md:w-80 border-b md:border-b-0 md:border-r border-[#333333] bg-[#050505] p-8 flex flex-col overflow-y-auto">
         <div class="mb-8">
             <p class="text-xs tracking-widest text-gray-500 font-bold uppercase mb-2">Protocol</p>
-            <h1 class="text-2xl text-white">SYS-HIIT-001</h1>
-            <p class="text-sm text-gray-400 mt-2">Format: Gym Floor (Duet / RA Modified)</p>
+            <h1 class="text-2xl text-white">KIN-H001</h1>
+            <p class="text-sm text-gray-400 mt-2">Gym Floor: Kinetic Power</p>
         </div>
 
         <div class="mb-12 border border-[#333333] bg-[#111111] p-6">
-            <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-4">Session Clock</h3>
-            <div id="timerDisplay" class="clock-display text-4xl text-white mb-6 text-center">00:00</div>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xs uppercase tracking-widest text-gray-500">Interval Clock</h3>
+                <span id="roundDisplay" class="text-xs font-bold tracking-widest text-white border border-[#333333] px-2 py-1">ROUND 1/3</span>
+            </div>
+            
+            <div class="text-center mb-6">
+                <p id="stateDisplay" class="text-xs uppercase tracking-widest text-gray-500 mb-1">PREPARE</p>
+                <div id="timerDisplay" class="clock-display text-5xl font-bold timer-work">00:45</div>
+            </div>
+
             <div class="flex space-x-4">
-                <button id="startBtn" onclick="toggleTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-sm font-semibold tracking-wide">START</button>
-                <button onclick="resetTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-sm font-semibold tracking-wide text-gray-500">RESET</button>
+                <button id="startBtn" onclick="toggleHiitTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-sm font-semibold tracking-wide">START</button>
+                <button onclick="resetHiitTimer()" class="flex-1 border border-[#333333] bg-[#050505] hover:bg-[#222222] transition-colors py-2 text-sm font-semibold tracking-wide text-gray-500">RESET</button>
             </div>
         </div>
 
         <nav class="flex-1 space-y-4" id="nav-menu">
             <button onclick="switchPhase('primer')" class="nav-btn w-full text-left p-4 border border-[#333333] bg-[#111111] hover:border-gray-500 transition-colors active-nav">
-                <span class="text-xs text-gray-500 block mb-1">0:00 - 10:00</span>
-                <span class="font-semibold tracking-wide">1. Primer (Mobility)</span>
+                <span class="text-xs text-gray-500 block mb-1">Mobility Prep</span>
+                <span class="font-semibold tracking-wide">1. Primer</span>
             </button>
-            <button onclick="switchPhase('anchor')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
-                <span class="text-xs text-gray-500 block mb-1">10:00 - 20:00</span>
-                <span class="font-semibold tracking-wide">2. Anchor (Strength)</span>
+            <button onclick="switchPhase('blockA')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
+                <span class="text-xs text-gray-500 block mb-1">Sagittal Power</span>
+                <span class="font-semibold tracking-wide">2. Block A</span>
             </button>
-            <button onclick="switchPhase('crucible')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
-                <span class="text-xs text-gray-500 block mb-1">20:00 - 40:00</span>
-                <span class="font-semibold tracking-wide">3. Crucible (Metabolic)</span>
+            <button onclick="switchPhase('blockB')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
+                <span class="text-xs text-gray-500 block mb-1">Transverse Core</span>
+                <span class="font-semibold tracking-wide">3. Block B</span>
             </button>
-            <button onclick="switchPhase('unwind')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
-                <span class="text-xs text-gray-500 block mb-1">40:00 - 50:00</span>
-                <span class="font-semibold tracking-wide">4. Unwind (Strap Release)</span>
+            <button onclick="switchPhase('burnout')" class="nav-btn w-full text-left p-4 border border-[#333333] hover:border-gray-500 transition-colors">
+                <span class="text-xs text-gray-500 block mb-1">Continuous Load</span>
+                <span class="font-semibold tracking-wide">4. Finisher</span>
             </button>
         </nav>
     </aside>
@@ -74,241 +84,257 @@
     <main class="flex-1 bg-[#050505] p-8 md:p-16 overflow-y-auto" id="content-area">
         
         <div id="primer" class="phase-content active">
-            <h2 class="text-4xl mb-2">The Primer (Mobility Flow)</h2>
-            <p class="text-gray-400 mb-12 uppercase tracking-widest text-sm">Universal Floor Prep</p>
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-4xl mb-2">The Primer (Mobility)</h2>
+                    <p class="text-gray-400 uppercase tracking-widest text-sm">KB Halo to Deep Squat</p>
+                </div>
+                <div class="border border-[#333333] px-4 py-2 bg-[#111111]">
+                    <span class="text-xs text-gray-500 uppercase tracking-widest block mb-1">Tools Required</span>
+                    <span class="font-semibold text-white">Light Kettlebell</span>
+                </div>
+            </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">LANE A (Standard)</h3>
+                    <h3 class="text-xl mb-4 text-gray-300">Execution (45s Flow)</h3>
                     <ul class="space-y-4">
                         <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-5 h-5 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed">90/90 Hip Switches (Floor)</span>
+                            <span class="text-gray-300 leading-relaxed">• Orbit KB tightly around the head (Halo).</span>
                         </li>
                         <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-5 h-5 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed">Glute Bridges (Bodyweight)</span>
+                            <span class="text-gray-300 leading-relaxed">• Drop immediately into a deep goblet squat.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-gray-300 leading-relaxed">• Drive up and reverse the halo direction.</span>
                         </li>
                     </ul>
                 </div>
-                <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">LANE B (RA Modified)</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-5 h-5 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed">90/90 Hip Switches (Use hands for support)</span>
-                        </li>
-                        <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none focus:ring-0 w-5 h-5 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed">Glute Bridges (Focus on articulation)</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div class="bg-[#111111] border border-[#333333] p-8">
                     <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
-                    <p class="text-gray-200">Lubricate the synovial joints. Ensure the femur rotates cleanly within the acetabulum.</p>
-                </div>
-                <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Shepherd Cue</h3>
-                    <p class="text-gray-200 italic font-light">"Move like oil warming up in an engine. Smooth and deliberate."</p>
+                    <p class="text-gray-200">Maintain vertical thorax during the squat. Anchor the scapula during the halo to isolate shoulder mobility, not spinal extension.</p>
                 </div>
             </div>
 
             <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
                 <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
-                <p class="text-red-200 text-lg">Forcing range of motion through spinal compensation instead of true hip mobility.</p>
+                <p class="text-red-200 text-lg">Rib flare during the halo, or lumbar spine rounding (butt wink) at the bottom of the deep squat.</p>
             </div>
         </div>
 
-        <div id="anchor" class="phase-content">
-            <h2 class="text-4xl mb-2">The Anchor (Strength)</h2>
-            <p class="text-gray-400 mb-12 uppercase tracking-widest text-sm">Heavy Isometric/Eccentric</p>
+        <div id="blockA" class="phase-content">
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-4xl mb-2">Block A (Sagittal Power)</h2>
+                    <p class="text-gray-400 uppercase tracking-widest text-sm">45s Work / 15s Rest | 3 Rounds</p>
+                </div>
+                <div class="border border-[#333333] px-4 py-2 bg-[#111111]">
+                    <span class="text-xs text-gray-500 uppercase tracking-widest block mb-1">Tools Required</span>
+                    <span class="font-semibold text-white">Heavy DB / Ankle Weights</span>
+                </div>
+            </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">LANE A (Standard)</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed">Goblet Squat Hold (Kettlebell)</span>
-                        </li>
-                        <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed">Alternating Reverse Lunges (Controlled)</span>
-                        </li>
-                    </ul>
+                    <h3 class="text-xl mb-4 text-gray-300">M1: Goblet Squat</h3>
+                    <p class="text-gray-400 mb-4 text-sm">3-second slow eccentric descent. 1-second explosive concentric drive.</p>
+                    <h3 class="text-xl mb-4 text-gray-300 mt-8">M2: Reverse Lunge + Knee Drive</h3>
+                    <p class="text-gray-400 text-sm">Ankle weights on. Step back into deep lunge, explode forward driving the knee to chest height. (Alternate legs per round).</p>
                 </div>
                 <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">LANE B (RA Modified)</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed">Wall Sit (Bodyweight or Ankle Weights)</span>
-                        </li>
-                        <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed">Standing March (Anti-rotation focus)</span>
-                        </li>
-                    </ul>
+                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
+                    <p class="text-gray-200">Force production originates from lumbopelvic stability. The core must brace completely before the explosive phase.</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
-                    <p class="text-gray-200">Sustain deep muscle contraction to fatigue without causing joint shear or relying on momentum.</p>
-                </div>
-                <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Shepherd Cue</h3>
-                    <p class="text-gray-200 italic font-light">"Become an immovable statue. Let the muscles burn, keep the joints silent."</p>
-                </div>
+            <div class="border border-[#333333] bg-[#0a0a0a] p-8 mb-8">
+                <h3 class="text-gray-400 font-bold uppercase tracking-widest text-sm mb-2">Progression / Regression</h3>
+                <p class="text-gray-300">Regress lunge to a static split squat if balance fails under fatigue.</p>
             </div>
 
             <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
-                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">CRITICAL Safety Gate (QA Fail)</h3>
-                <p class="text-red-200 text-lg">Knees caving inward (Valgus collapse) during the squat/lunge or wall sit.</p>
+                <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
+                <p class="text-red-200 text-lg">Knee valgus (caving inward) on the lunge drive, indicating glute medius failure.</p>
             </div>
         </div>
 
-        <div id="crucible" class="phase-content">
-            <h2 class="text-4xl mb-2">The Crucible (Metabolic)</h2>
-            <p class="text-gray-400 mb-12 uppercase tracking-widest text-sm">30s Work / 10s Transition</p>
+        <div id="blockB" class="phase-content">
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-4xl mb-2">Block B (Transverse Core)</h2>
+                    <p class="text-gray-400 uppercase tracking-widest text-sm">45s Work / 15s Rest | 3 Rounds</p>
+                </div>
+                <div class="border border-[#333333] px-4 py-2 bg-[#111111]">
+                    <span class="text-xs text-gray-500 uppercase tracking-widest block mb-1">Tools Required</span>
+                    <span class="font-semibold text-white">Medium DBs / Light DB</span>
+                </div>
+            </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">LANE A (Standard)</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed">Dumbbell Thrusters (Squat to Press)</span>
-                        </li>
-                        <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed">Floor Mountain Climbers</span>
-                        </li>
-                    </ul>
+                    <h3 class="text-xl mb-4 text-gray-300">M1: Renegade Row</h3>
+                    <p class="text-gray-400 mb-4 text-sm">High plank position holding DBs. Row one arm back while fighting rotational pull. Alternate arms.</p>
+                    <h3 class="text-xl mb-4 text-gray-300 mt-8">M2: Weighted Hollow Hold</h3>
+                    <p class="text-gray-400 text-sm">Supine. Legs at 45 degrees. Hold a single light DB extended over the chest. Static isometric hold.</p>
                 </div>
-                <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">LANE B (RA Modified)</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed">Shadow Boxing (Wearing Wrist Weights)</span>
-                        </li>
-                        <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed">Standing High Knee Drives (Ankle Weights)</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div class="bg-[#111111] border border-[#333333] p-8">
                     <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
-                    <p class="text-gray-200">Cardiovascular spiking via continuous peripheral blood flow shifting (upper body to lower body).</p>
-                </div>
-                <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Shepherd Cue</h3>
-                    <p class="text-gray-200 italic font-light">"Keep the fire burning. Do not let the engine stall during the transitions."</p>
+                    <p class="text-gray-200">Strict anti-rotation. The pelvis must remain parallel to the floor during the row. Wide foot stance for stability.</p>
                 </div>
             </div>
 
             <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
                 <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
-                <p class="text-red-200 text-lg">Lane A: Lumbar collapse in plank. Lane B: Gripping weights too tightly or bearing weight on flexed wrists.</p>
+                <p class="text-red-200 text-lg">Hips swinging violently side-to-side during the row (Regress to knees), or lumbar spine arching off the mat in Hollow Hold.</p>
             </div>
         </div>
 
-        <div id="unwind" class="phase-content">
-            <h2 class="text-4xl mb-2">The Integration (Unwind)</h2>
-            <p class="text-gray-400 mb-12 uppercase tracking-widest text-sm">Strap-Assisted Release</p>
+        <div id="burnout" class="phase-content">
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-4xl mb-2">The Finisher (Continuous)</h2>
+                    <p class="text-gray-400 uppercase tracking-widest text-sm">2 Minutes Unbroken</p>
+                </div>
+                <div class="border border-[#333333] px-4 py-2 bg-[#111111]">
+                    <span class="text-xs text-gray-500 uppercase tracking-widest block mb-1">Tools Required</span>
+                    <span class="font-semibold text-white">Heaviest KB / DB available</span>
+                </div>
+            </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <div class="bg-[#111111] border border-[#333333] p-8 col-span-1 lg:col-span-2">
-                    <h3 class="lane-header text-lg text-gray-300 mb-4 border-b border-[#333333] pb-2">UNIVERSAL MAT (Lane A & B)</h3>
+                <div class="bg-[#111111] border border-[#333333] p-8">
+                    <h3 class="text-xl mb-4 text-gray-300">Execution</h3>
                     <ul class="space-y-4">
                         <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed">Supine Strap-Assisted Hamstring Stretch</span>
+                            <span class="text-gray-300 leading-relaxed">• Unilateral Farmer's Carry (Suitcase Carry).</span>
                         </li>
                         <li class="flex items-start">
-                            <input type="checkbox" class="mt-1 mr-4 bg-[#050505] border-[#333333] rounded-none w-5 h-5 cursor-pointer">
-                            <span class="text-gray-300 leading-relaxed">Open-Chest Breathing (Supine over rolled towel)</span>
+                            <span class="text-gray-300 leading-relaxed">• Hold heavy weight in ONE hand. Walk for 60 seconds.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-gray-300 leading-relaxed">• Switch hands immediately. Walk for 60 seconds.</span>
                         </li>
                     </ul>
                 </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div class="bg-[#111111] border border-[#333333] p-8">
                     <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Wolf Cue</h3>
-                    <p class="text-gray-200">Down-regulate the sympathetic nervous system. Passive eccentric release.</p>
-                </div>
-                <div class="bg-[#111111] border border-[#333333] p-8">
-                    <h3 class="text-sm uppercase tracking-widest text-gray-500 mb-2">The Shepherd Cue</h3>
-                    <p class="text-gray-200 italic font-light">"Let the floor completely swallow your body weight."</p>
+                    <p class="text-gray-200">Axial elongation under unilateral load. Engage the contralateral obliques to prevent the spine from bending toward the weight.</p>
                 </div>
             </div>
 
             <div class="border border-red-900/50 bg-[#110505] p-8 border-l-4 border-l-red-500">
                 <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Safety Gate (QA Fail)</h3>
-                <p class="text-red-200 text-lg">Tensing the neck or shoulders to pull aggressively on the stretching straps.</p>
+                <p class="text-red-200 text-lg">Lateral flexion (leaning side-to-side) or shrugging the weighted shoulder into the ear.</p>
             </div>
         </div>
 
     </main>
 
     <script>
-        // Phase Switching Logic
+        // Phase Switching
         function switchPhase(phaseId) {
-            document.querySelectorAll('.phase-content').forEach(el => { el.classList.remove('active'); });
+            document.querySelectorAll('.phase-content').forEach(el => el.classList.remove('active'));
             document.getElementById(phaseId).classList.add('active');
             
-            document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('bg-[#111111]'); });
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-[#111111]'));
             event.currentTarget.classList.add('bg-[#111111]');
         }
 
-        // Timer Logic
-        let timerInterval;
-        let seconds = 0;
-        let isRunning = false;
+        // HIIT Interval Timer Logic
+        let hiitInterval;
+        let isHiitRunning = false;
+        
+        const WORK_TIME = 45;
+        const REST_TIME = 15;
+        const TOTAL_ROUNDS = 3;
+        
+        let currentTime = WORK_TIME;
+        let currentRound = 1;
+        let isWorkPhase = true; // true = work, false = rest
 
-        function updateDisplay() {
-            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
-            const secs = (seconds % 60).toString().padStart(2, '0');
-            document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
-        }
+        const timerDisplay = document.getElementById('timerDisplay');
+        const stateDisplay = document.getElementById('stateDisplay');
+        const roundDisplay = document.getElementById('roundDisplay');
+        const startBtn = document.getElementById('startBtn');
 
-        function toggleTimer() {
-            const btn = document.getElementById('startBtn');
-            if (isRunning) {
-                clearInterval(timerInterval);
-                btn.innerText = 'RESUME';
-                btn.classList.replace('text-red-500', 'text-white');
+        function updateHiitDisplay() {
+            const mins = Math.floor(currentTime / 60).toString().padStart(2, '0');
+            const secs = (currentTime % 60).toString().padStart(2, '0');
+            timerDisplay.innerText = `${mins}:${secs}`;
+            
+            if (currentTime <= 3 && currentTime > 0) {
+                timerDisplay.className = 'clock-display text-5xl font-bold timer-alert';
+            } else if (isWorkPhase) {
+                timerDisplay.className = 'clock-display text-5xl font-bold timer-work';
             } else {
-                timerInterval = setInterval(() => {
-                    seconds++;
-                    updateDisplay();
-                }, 1000);
-                btn.innerText = 'PAUSE';
-                btn.classList.add('text-red-500');
+                timerDisplay.className = 'clock-display text-5xl font-bold timer-rest';
             }
-            isRunning = !isRunning;
         }
 
-        function resetTimer() {
-            clearInterval(timerInterval);
-            seconds = 0;
-            isRunning = false;
-            updateDisplay();
-            const btn = document.getElementById('startBtn');
-            btn.innerText = 'START';
-            btn.classList.remove('text-red-500');
-            btn.classList.add('text-white');
+        function toggleHiitTimer() {
+            if (isHiitRunning) {
+                clearInterval(hiitInterval);
+                startBtn.innerText = 'RESUME';
+                startBtn.classList.replace('text-red-500', 'text-white');
+            } else {
+                startBtn.innerText = 'PAUSE';
+                startBtn.classList.add('text-red-500');
+                
+                if (currentTime === WORK_TIME && currentRound === 1 && isWorkPhase) {
+                    stateDisplay.innerText = "WORK";
+                }
+
+                hiitInterval = setInterval(() => {
+                    currentTime--;
+                    
+                    if (currentTime < 0) {
+                        // Switch phases
+                        if (isWorkPhase) {
+                            // Moving to Rest
+                            isWorkPhase = false;
+                            currentTime = REST_TIME;
+                            stateDisplay.innerText = "REST / TRANSITION";
+                        } else {
+                            // Moving to next Work round
+                            currentRound++;
+                            if (currentRound > TOTAL_ROUNDS) {
+                                // Workout Complete
+                                clearInterval(hiitInterval);
+                                isHiitRunning = false;
+                                stateDisplay.innerText = "BLOCK COMPLETE";
+                                timerDisplay.innerText = "00:00";
+                                timerDisplay.className = 'clock-display text-5xl font-bold text-green-500';
+                                startBtn.innerText = 'DONE';
+                                startBtn.disabled = true;
+                                return;
+                            }
+                            isWorkPhase = true;
+                            currentTime = WORK_TIME;
+                            stateDisplay.innerText = "WORK";
+                            roundDisplay.innerText = `ROUND ${currentRound}/${TOTAL_ROUNDS}`;
+                        }
+                    }
+                    updateHiitDisplay();
+                }, 1000);
+            }
+            isHiitRunning = !isHiitRunning;
+        }
+
+        function resetHiitTimer() {
+            clearInterval(hiitInterval);
+            isHiitRunning = false;
+            isWorkPhase = true;
+            currentRound = 1;
+            currentTime = WORK_TIME;
+            
+            stateDisplay.innerText = "PREPARE";
+            roundDisplay.innerText = `ROUND 1/${TOTAL_ROUNDS}`;
+            startBtn.innerText = 'START';
+            startBtn.classList.remove('text-red-500');
+            startBtn.classList.add('text-white');
+            startBtn.disabled = false;
+            
+            updateHiitDisplay();
         }
     </script>
 </body>
